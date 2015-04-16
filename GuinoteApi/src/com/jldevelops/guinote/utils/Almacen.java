@@ -17,12 +17,11 @@ public class Almacen {
 		return alm.get(idPart);
 	}
 	
-	public Partida getPartida(int idPart){
+	public Partida getPartida(Integer idPart){
 		return alm.get(idPart);
 	}
 	
-	public void deletePartida(int idPart){
-		alm.put(idPart, null);
+	public void deletePartida(Integer idPart){
 		alm.remove(idPart);
 	}
 }
