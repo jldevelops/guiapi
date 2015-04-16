@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import com.jldevelops.guinote.core.Partida;
 
-//almacen de partidas para evitar out of memory error en node
+
 public class Almacen {
 	private HashMap<Integer,Partida> alm;
 	
