@@ -7,47 +7,47 @@ public class Jugador implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -2607177138340818103L;
-	private final Carta[] mano;
-	private final int idJug;
-	private String nombre;
-	private boolean[] reyes;//reyes que han salido en orden oceb
-	private boolean[] sotas;//sotas que han salido en orden oceb
+	private final Carta[] m;
+	private final int i;
+	private String n;
+	//private boolean[] reyes;//reyes que han salido en orden oceb
+	//private boolean[] sotas;//sotas que han salido en orden oceb
 
 
 	Jugador(int idjugador){
-		mano = new Carta[6];
-		idJug = idjugador;
-		reyes = new boolean[4];
-		sotas = new boolean[4];
+		m = new Carta[6];
+		i = idjugador;
+		//reyes = new boolean[4];
+		//sotas = new boolean[4];
 	}
 	
 	public int getIdJug() {
-		return idJug;
+		return i;
 	}
 	Carta[] getMano() {
-		return mano;
+		return m;
 	}
 	public Carta getCarta(int idcarta){
-		return mano[idcarta];
+		return m[idcarta];
 	}
 	void meterCarta(Carta c, char t){
         boolean b = false;
-		for(int i = 0; i<mano.length; i++){
+		for(int i = 0; i<m.length; i++){
             if(b){
-                mano[i-1] = mano[i];
+                m[i-1] = m[i];
             }
-			if(mano[i] == null)
+			if(m[i] == null)
 				b = true;
 		}
-        mano[5] = c;
+        m[5] = c;
 		ordenarMano(t);
 	}
 	
 	private void ordenarMano(char triunfo){
 		int tri = 0;
 		for(int tr = 0;tr<6;tr++){
-			if(mano[tr] != null){
-				if(mano[tr].getPalo() == triunfo){
+			if(m[tr] != null){
+				if(m[tr].getPalo() == triunfo){
 					if(tri < tr){
 						intercambiar(tr,tri);
 						tri++;
@@ -64,9 +64,9 @@ public class Jugador implements Serializable{
 		if(carta1 >= 0 && carta1<=5 && carta2 >= 0 && carta2<=5){
 			//el metodo ordena peta si no se comprueban
 			//nota para futuro: comprobar origen de petada
-			Carta tmp = mano[carta1];
-			mano[carta1] = mano[carta2];
-			mano[carta2] = tmp;
+			Carta tmp = m[carta1];
+			m[carta1] = m[carta2];
+			m[carta2] = tmp;
 		}
 	}
 	
@@ -77,9 +77,9 @@ public class Jugador implements Serializable{
 	 * @return La carta tirada
 	 */
 	Carta tirarCarta(int ncarta) {
-		if(mano[ncarta] != null){
-			Carta tmp = mano[ncarta];
-			mano[ncarta] = null;
+		if(m[ncarta] != null){
+			Carta tmp = m[ncarta];
+			m[ncarta] = null;
 			return tmp;
 		}
 		else
@@ -96,9 +96,9 @@ public class Jugador implements Serializable{
 		String b = "";
 		boolean flag = false;
 		for(int i = 0; i<6;i++){
-			if(mano[i] != null){
-				if(c.getPalo() == mano[i].getPalo()){
-					if(c.getNumero()< mano[i].getNumero()){
+			if(m[i] != null){
+				if(c.getPalo() == m[i].getPalo()){
+					if(c.getNumero()< m[i].getNumero()){
 						b += "1";
 						flag = true;
 					}
@@ -138,10 +138,10 @@ public class Jugador implements Serializable{
 	 * @return la posicion de la carta, si no -1
 	 */
 	public int numCarta(String carta){
-		for(int i = 0; i < mano.length;i++){
-			if(mano[i] != null){
-				if(mano[i].getNumero()-1 == Integer.parseInt(carta.charAt(0)+"")){
-					if(mano[i].getPalo() == carta.charAt(1))
+		for(int i = 0; i < m.length;i++){
+			if(m[i] != null){
+				if(m[i].getNumero()-1 == Integer.parseInt(carta.charAt(0)+"")){
+					if(m[i].getPalo() == carta.charAt(1))
 						return i;
 				}
 			}
@@ -161,8 +161,8 @@ public class Jugador implements Serializable{
     private String tieneMismoPalo(char palo){
         String b = "";
         for(int i = 0;i<6;i++){
-            if(mano[i]!= null){
-                if(palo == mano[i].getPalo())
+            if(m[i]!= null){
+                if(palo == m[i].getPalo())
                     b += "1";
                 else
                     b += "0";
@@ -174,7 +174,7 @@ public class Jugador implements Serializable{
     }
 	
 	public boolean sinCartas(){
-            for(Carta c:mano){
+            for(Carta c:m){
                 if(c != null)
                     return false;
             }
@@ -182,11 +182,11 @@ public class Jugador implements Serializable{
         }
 
 	public String getNombre() {
-		return nombre;
+		return n;
 	}
 
 	public void setNombre(String nombre) {
-		this.nombre = nombre;
+		this.n = nombre;
 	}
 	public int[] paja(char pt){//devuelve un vector con las posiciones
 
@@ -194,8 +194,8 @@ public class Jugador implements Serializable{
 		int v[] = new int[6];
 		boolean flag = false;
 		for(int i = 0; i<6;i++){
-			if(mano[i]!= null){
-				if(mano[i].getPalo() != pt && mano[i].getNumero()<=5){
+			if(m[i]!= null){
+				if(m[i].getPalo() != pt && m[i].getNumero()<=5){
 					v[k] = i;
 					k++;
 					flag = true;
@@ -212,7 +212,7 @@ public class Jugador implements Serializable{
 			return null;
 		}
 	}
-	public int[] sotasyreyescantados(char pt){//devuelve un vector con las posiciones
+	/*public int[] sotasyreyescantados(char pt){//devuelve un vector con las posiciones
 		int k = 0;
 		int v[] = new int[6];
 		boolean flag = false;
@@ -298,14 +298,14 @@ public class Jugador implements Serializable{
 		else{
 			return null;
 		}
-	}
+	}*/
 	public int[] caballos(char pt){//devuelve un vector con las posiciones
 		int k = 0;
 		int v[] = new int[6];
 		boolean flag = false;
 		for(int i = 0; i<6;i++){
-			if(mano[i]!= null){
-				if(mano[i].getPalo() != pt && mano[i].getNumero()==6){
+			if(m[i]!= null){
+				if(m[i].getPalo() != pt && m[i].getNumero()==6){
 					v[k] = i;
 					k++;
 					flag = true;
@@ -327,8 +327,8 @@ public class Jugador implements Serializable{
 		int v[] = new int[6];
 		boolean flag = false;
 		for(int i = 0; i<6;i++){
-			if(mano[i]!= null){
-				if(mano[i].getPalo() == pt && mano[i].getNumero()>=9){
+			if(m[i]!= null){
+				if(m[i].getPalo() == pt && m[i].getNumero()>=9){
 					v[k] = i;
 					k++;
 					flag = true;
@@ -350,8 +350,8 @@ public class Jugador implements Serializable{
 		int v[] = new int[6];
 		boolean flag = false;
 		for(int i = 0; i<6;i++){
-			if(mano[i]!= null){
-				if(mano[i].getPalo() != pt && (mano[i].getNumero()==9 || mano[i].getNumero()==10)){
+			if(m[i]!= null){
+				if(m[i].getPalo() != pt && (m[i].getNumero()==9 || m[i].getNumero()==10)){
 					v[k] = i;
 					k++;
 					flag = true;
@@ -372,9 +372,9 @@ public class Jugador implements Serializable{
 		int min = 11;
 		int pos = 0;
 		for(int i = 0;i<v.length;i++){
-			if(mano[i]!= null){
-				if(mano[v[i]].getNumero() < min){
-					min = mano[v[i]].getNumero();
+			if(m[i]!= null){
+				if(m[v[i]].getNumero() < min){
+					min = m[v[i]].getNumero();
 					pos = v[i];
 				}
 				}
@@ -382,7 +382,7 @@ public class Jugador implements Serializable{
 		}
 		return pos;
 	}
-	public int[] sotasyreyesporcantar(char pt){//devuelve un vector con las posiciones
+	/*public int[] sotasyreyesporcantar(char pt){//devuelve un vector con las posiciones
 		int k = 0;
 		int v[] = new int[6];
 		boolean flag = false;
@@ -467,14 +467,14 @@ public class Jugador implements Serializable{
 		else{
 			return null;
 		}
-	}
+	}*/
 	public int[] triunfosbajos(char pt){//devuelve un vector con las posiciones
 		int k = 0;
 		int v[] = new int[6];
 		boolean flag = false;
 		for(int i = 0; i<6;i++){
-			if(mano[i]!= null){
-				if(mano[i].getPalo() == pt && mano[i].getNumero()<5){
+			if(m[i]!= null){
+				if(m[i].getPalo() == pt && m[i].getNumero()<5){
 					v[k] = i;
 					k++;
 					flag = true;
@@ -496,8 +496,8 @@ public class Jugador implements Serializable{
 		int v[] = new int[6];
 		boolean flag = false;
 		for(int i = 0; i<6;i++){
-			if(mano[i]!= null){
-				if(mano[i].getPalo() == pt && mano[i].getNumero()>=5){
+			if(m[i]!= null){
+				if(m[i].getPalo() == pt && m[i].getNumero()>=5){
 					v[k] = i;
 					k++;
 					flag = true;
@@ -518,8 +518,8 @@ public class Jugador implements Serializable{
 		int i;
 		int r = -1;
 		for(i = 0; i<6;i++){
-			if(mano[i]!= null){
-				if(mano[i].getPalo() == c.getPalo() && mano[i].getNumero()>=9){
+			if(m[i]!= null){
+				if(m[i].getPalo() == c.getPalo() && m[i].getNumero()>=9){
 					r = i;
 					break;
 				}}
@@ -530,8 +530,8 @@ public class Jugador implements Serializable{
 		int i;
 		int r = -1;
 		for(i = 0; i<6;i++){
-			if(mano[i]!= null){
-				if(mano[i].getPalo() == c.getPalo() && mano[i].getNumero()>c.getNumero()){
+			if(m[i]!= null){
+				if(m[i].getPalo() == c.getPalo() && m[i].getNumero()>c.getNumero()){
 					r = i;
 					break;
 				}}
@@ -547,13 +547,13 @@ public class Jugador implements Serializable{
 				v = paja(palotriunfo);
 				break;
 			case 1:
-				v = sotasyreyescantados(palotriunfo);
+				//v = sotasyreyescantados(palotriunfo);
 				break;
 			case 2:
 				v = caballos(palotriunfo);
 				break;
 			case 3:
-				v = sotasyreyesporcantar(palotriunfo);
+				//v = sotasyreyesporcantar(palotriunfo);
 				break;
 			case 4:
 				v = triunfosbajos(palotriunfo);
