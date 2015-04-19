@@ -28,6 +28,7 @@ public class MiniTab implements Serializable {
 	final private int u;
 	final private boolean jd;
 	final private int cr;
+	private String[] nj;
 
 	public MiniTab(Jugador jugador, int[] puntuaciones, boolean[][] cantes,
 			int idJugActual, int haempezado, char palotriunfo,
@@ -51,6 +52,17 @@ public class MiniTab implements Serializable {
 	}
 	public boolean isCantado(char palo, int idjug) {
 		return c[aQueBaza(idjug)][Utils.paloInt(palo)];
+	}
+	
+	public String getNombreJugador(int idjug){
+		return nj[idjug];
+	}
+	
+	public void setNj(Object[] nom){
+		nj = new String[jd?4:2];
+		for(int i = 0;i<nom.length;i++){
+			nj[i] = (String) nom[i];
+		}
 	}
 
 	public int getTurno() {

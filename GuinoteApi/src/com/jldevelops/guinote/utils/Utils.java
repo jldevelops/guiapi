@@ -15,7 +15,7 @@ public class Utils {
 	
 	public static final boolean GUARDAR_PARTIDAS = false;
 	
-	public static Gson gson = new Gson();
+	public static Gson GSON = new Gson();
     
         public static int paloInt(char palo) {
         switch (palo) {

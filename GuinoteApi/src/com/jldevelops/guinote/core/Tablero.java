@@ -4,6 +4,7 @@ package com.jldevelops.guinote.core;
 
 import java.io.Serializable;
 
+import com.jldevelops.guinote.utils.MiniTab;
 import com.jldevelops.guinote.utils.Utils;
 
 
@@ -74,7 +75,7 @@ public class Tablero implements Serializable, Cloneable {
 	}
 
 	public boolean equals(Tablero t){
-		return Utils.gson.toJson(t).equals(Utils.gson.toJson(this));
+		return Utils.GSON.toJson(t).equals(Utils.GSON.toJson(this));
 	}
 
 	public Tablero clone() {
@@ -765,6 +766,10 @@ public class Tablero implements Serializable, Cloneable {
 
 	public boolean isArrastre() {
 		return getTriunfo() == null;
+	}
+	
+	public MiniTab toMiniTab(int idjug){
+		return new MiniTab(getJug(idjug), puntuaciones, cantes, idJugActual, haempezado, palotriunfo, cartasMesa, ultBaza, juegoDe4, getCartasRestantes());
 	}
 
 }

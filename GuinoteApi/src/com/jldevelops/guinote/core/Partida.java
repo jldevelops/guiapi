@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.jldevelops.guinote.utils.GuiJson;
+import com.jldevelops.guinote.utils.MiniTab;
 import com.jldevelops.guinote.utils.Utils;
 
 
@@ -75,11 +76,17 @@ public class Partida implements Serializable {
 	}
 
 	public String getTabActualJSON(){
-		return Utils.gson.toJson(tabActual);
+		return Utils.GSON.toJson(tabActual);
+	}
+	
+	public String getMiniTabJSON(int idjug){
+		MiniTab m = tabActual.toMiniTab(idjug);
+		m.setNj(noms);
+		return Utils.GSON.toJson(m);
 	}
 	
 	public String getPartidaJSON(){
-		return Utils.gson.toJson(tabs);
+		return Utils.GSON.toJson(tabs);
 	}
 
 	public boolean isTerminada(){
@@ -215,7 +222,7 @@ public class Partida implements Serializable {
 	}
 	
 	public String accionJugJSON(int idAcc,String params,int idjug){
-		return Utils.gson.toJson(accionJug(idAcc,params,idjug));
+		return Utils.GSON.toJson(accionJug(idAcc,params,idjug));
 	}
 	
 	/**
@@ -274,7 +281,7 @@ public class Partida implements Serializable {
 	}
 
 	public String msgToJson(GuiJson msg){
-		return Utils.gson.toJson(msg);
+		return Utils.GSON.toJson(msg);
 	}
 	
 	public int getTurno(){
