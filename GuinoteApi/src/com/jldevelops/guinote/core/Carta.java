@@ -8,15 +8,15 @@ import java.io.Serializable;
 public class Carta implements Serializable{
 
 	private static final long serialVersionUID = -3072057561982949886L;
-	private char p;
-	private int n;
+	private char palo;
+	private int numero;
 	Carta(char palo, int numero){
-		this.p = palo;
-		this.n = numero;
+		this.palo = palo;
+		this.numero = numero;
 	}
 
 	public char getPalo() {
-		return p;
+		return palo;
 	}
 	
 	
@@ -24,18 +24,18 @@ public class Carta implements Serializable{
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString(){
-		return (this.n-1)+""+this.p;
+		return (this.numero-1)+""+this.palo;
 	}
 	
 	public boolean isGuinote(){
-		if(n == 9 || n == 10)
+		if(numero == 9 || numero == 10)
 			return true;
 		return false;
 	}
 
 
 	public int getPuntos(){
-		switch(n){
+		switch(numero){
 		case 10:
 			return 11;
 		case 9:
@@ -52,17 +52,17 @@ public class Carta implements Serializable{
 	}
 
 	public int getNumero() {
-		return n;
+		return numero;
 	}
 	//cambia los valores de esta carta con los de la carta pasada
 	//usado solo para permitir cambiar el 7 en la ultima robada
 	void intercambiarValor(Carta c){
-		char p = this.p;
-		int n = this.n;
-		this.p = c.p;
-		this.n = c.n;
-		c.p = p;
-		c.n = n;
+		char p = this.palo;
+		int n = this.numero;
+		this.palo = c.palo;
+		this.numero = c.numero;
+		c.palo = p;
+		c.numero = n;
 	}
 
 }
