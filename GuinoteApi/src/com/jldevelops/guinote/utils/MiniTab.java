@@ -8,9 +8,10 @@ import com.jldevelops.guinote.core.Jugador;
 public class MiniTab implements Serializable {
 	
 	private static final long serialVersionUID = 8L;
-	final private Jugador j;
+	final private String[] cs = new String[6];
 	final private int[] p;
 	final private boolean[][] c;
+	final private String t;
 	/**
 	 * id del jugador que le toca hablar
 	 */
@@ -21,7 +22,7 @@ public class MiniTab implements Serializable {
 	/**
 	 * en la posicion 0 SIEMPRE estara la carta del jugador que ha sido el primero en tirar.
 	 */
-	final private Carta[] me;
+	final private String[] me;
 	/**
 	 * id del jugador que ha hecho la ultima baza
 	 */
@@ -32,23 +33,32 @@ public class MiniTab implements Serializable {
 
 	public MiniTab(Jugador jugador, int[] puntuaciones, boolean[][] cantes,
 			int idJugActual, int haempezado, char palotriunfo,
-			Carta[] cartasMesa, int ultBaza, boolean juegoDe4,int cr) {
+			Carta[] cartasMesa, int ultBaza, boolean juegoDe4,int cr,Carta triunfo) {
 		super();
-		this.j = jugador;
+		for(int i=0;i<6;i++){
+			cs[i] = jugador.getCarta(i).toString();
+		}
 		this.p = puntuaciones;
 		this.c = cantes;
 		this.i = idJugActual;
 		this.h = haempezado;
 		this.pt = palotriunfo;
-		this.me = cartasMesa;
+		this.me = new String[juegoDe4?4:2];
+		for(int i = 0;i<(juegoDe4?4:2);i++){
+			me[i] = cartasMesa[i].toString();
+		}
 		this.u = ultBaza;
 		this.jd = juegoDe4;
 		this.cr = cr;
+		this.t = triunfo.toString();
 	}
 	
+	public String getTriunfo(){
+		return t;
+	}
 	
-	public Jugador getJugador() {
-		return j;
+	public String[] getCartas(){
+		return cs;
 	}
 	public boolean isCantado(char palo, int idjug) {
 		return c[aQueBaza(idjug)][Utils.paloInt(palo)];
@@ -132,7 +142,7 @@ public class MiniTab implements Serializable {
 	 * @param idjug
 	 * @return Carta
 	 */
-	public Carta getCartaMesa(int idjug){
+	public String getCartaMesa(int idjug){
 		int ultBaza1 = u;
 		if(u == -1)
 			ultBaza1 = h;
