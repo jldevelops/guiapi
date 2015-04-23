@@ -79,10 +79,14 @@ public class Partida implements Serializable {
 		return Utils.GSON.toJson(tabActual);
 	}
 	
-	public String getMiniTabJSON(int idjug){
-		MiniTab m = tabActual.toMiniTab(idjug);
-		m.setNj(noms);
-		return Utils.GSON.toJson(m);
+	public String[] getMiniTabsJSON(){
+		String[] tm = new String[tipoPartida?4:2];
+		for(int i = 0;i<tm.length;i++){
+			MiniTab m = tabActual.toMiniTab(i);
+			m.setNj(noms);
+			tm[i] = Utils.GSON.toJson(m);
+		}
+		return tm;
 	}
 	
 	public String getPartidaJSON(){
