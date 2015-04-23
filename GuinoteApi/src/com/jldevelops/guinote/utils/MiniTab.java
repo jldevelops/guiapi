@@ -36,7 +36,8 @@ public class MiniTab implements Serializable {
 			Carta[] cartasMesa, int ultBaza, boolean juegoDe4,int cr,Carta triunfo) {
 		super();
 		for(int i=0;i<6;i++){
-			cs[i] = jugador.getCarta(i).toString();
+			if(jugador.getCarta(i) != null)
+				cs[i] = jugador.getCarta(i).toString();
 		}
 		this.p = puntuaciones;
 		this.c = cantes;
