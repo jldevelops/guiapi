@@ -45,12 +45,16 @@ public class MiniTab implements Serializable {
 		this.pt = palotriunfo;
 		this.me = new String[juegoDe4?4:2];
 		for(int i = 0;i<(juegoDe4?4:2);i++){
-			me[i] = cartasMesa[i].toString();
+			if(cartasMesa[i] != null)
+				me[i] = cartasMesa[i].toString();
 		}
 		this.u = ultBaza;
 		this.jd = juegoDe4;
 		this.cr = cr;
-		this.t = triunfo.toString();
+		if(triunfo != null)
+			this.t = triunfo.toString();
+		else
+			this.t = null;
 	}
 	
 	public String getTriunfo(){
