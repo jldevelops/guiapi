@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.jldevelops.guinote.core.Carta;
 import com.jldevelops.guinote.core.Jugador;
+import static com.jldevelops.guinote.utils.Utils.PALOSC;
 
 public class MiniTab implements Serializable {
 	
@@ -66,7 +67,7 @@ public class MiniTab implements Serializable {
 		return cs;
 	}
 	public boolean isCantado(char palo, int idjug) {
-		return c[aQueBaza(idjug)][Utils.paloInt(palo)];
+		return c[aQueBaza(idjug)][PALOSC.indexOf(palo)];
 	}
 	
 	public String getNombreJugador(int idjug){
