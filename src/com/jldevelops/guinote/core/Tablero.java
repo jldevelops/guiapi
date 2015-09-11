@@ -222,7 +222,7 @@ public class Tablero implements Serializable, Cloneable {
     }
 
     public MiniTab toMiniTab(int idjug) {
-        return new MiniTab(getJug(idjug), puntuaciones, cantes, idJugActual, haempezado, palotriunfo, cartasMesa, ultBaza, juegoDe4, getCartasRestantes(), getTriunfo());
+        return new MiniTab(idjug,jugadores, puntuaciones, cantes, idJugActual, haempezado, palotriunfo, cartasMesa, ultBaza, juegoDe4, getCartasRestantes(), getTriunfo());
     }
 
     public boolean isJuegoDe4() {

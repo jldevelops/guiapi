@@ -12,6 +12,8 @@ public class Jugador implements Serializable {
     private static final long serialVersionUID = -2607177138340818103L;
     private Carta[] mano;
     private final int idJug;
+    private boolean inactivo;
+    private String idDisp;
     private String nombre;
     private final boolean[] reyes;//reyes que han salido en orden oceb
     private final boolean[] sotas;//sotas que han salido en orden oceb
@@ -24,6 +26,23 @@ public class Jugador implements Serializable {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Getters y setters">
+
+    public boolean isInactivo() {
+        return inactivo;
+    }
+
+    public void setInactivo(boolean inactivo) {
+        this.inactivo = inactivo;
+    }
+    
+    public String getIdDisp() {
+        return idDisp;
+    }
+
+    public void setIdDisp(String idDisp) {
+        this.idDisp = idDisp;
+    }
+    
     public int getIdJug() {
         return idJug;
     }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jldevelops.guinote.utils.GuiJson;
+import com.jldevelops.guinote.utils.Jug;
 import com.jldevelops.guinote.utils.MiniTab;
 import com.jldevelops.guinote.utils.Utils;
 
@@ -28,13 +29,14 @@ public class Partida implements Serializable {
     private int ganadorDesemp = -1;//ganador de la jugada si ambos superan 51 buenas
     //si no -1
     private Tablero tab;
-    private String[] noms;
     private GuiJson js;
     private final boolean tipoPartida;
+    private String salaEspera;
     /**
      * indica que la partida ya está acabada
      */
     private boolean terminada;
+    private boolean dialogoMostrado;
     private boolean deVueltas;
 
     /**
@@ -43,23 +45,52 @@ public class Partida implements Serializable {
      * @param idjug id del jugador que empieza a tirar
      * @param nom array de string con los nombres de los jugadores
      */
-    public Partida(int id, boolean tipoDeJuego, int idjug, Object[] nom) {
+    public Partida(int id, boolean tipoDeJuego, int idjug, String[] nom) {
         this.id = id;
         js = new GuiJson(tipoDeJuego);
         tipoPartida = tipoDeJuego;
-        tabs = new ArrayList<Tablero>();
+        tabs = new ArrayList<>();
         tab = new Tablero(tipoDeJuego, idjug, null);
-        noms = new String[tipoPartida ? 4 : 2];
         if (nom != null) {
             for (int i = 0; i < (tipoPartida ? 4 : 2); i++) {
-                tab.getJug(i).setNombre((String) nom[i]);
-                noms[i] = (String) nom[i];
+                tab.getJug(i).setNombre(nom[i]);
+            }
+        }
+
+    }
+
+    /**
+     * @param id
+     * @param tipoDeJuego true=4jug false=2jug
+     * @param idjug id del jugador que empieza a tirar
+     * @param jugs objetos con metodos para obtener id y nombre
+     */
+    public Partida(int id, boolean tipoDeJuego, int idjug, List<Jug> jugs,String salaEspera) {
+        this.id = id;
+        this.salaEspera = salaEspera;
+        js = new GuiJson(tipoDeJuego);
+        tipoPartida = tipoDeJuego;
+        tabs = new ArrayList<>();
+        tab = new Tablero(tipoDeJuego, idjug, null);
+        if (jugs != null) {
+            for (int i = 0; i < (tipoPartida ? 4 : 2); i++) {
+                tab.getJug(i).setNombre(jugs.get(i).getNombre());
+                tab.getJug(i).setIdDisp(jugs.get(i).getId());
             }
         }
 
     }
 
     //<editor-fold defaultstate="collapsed" desc="Getters">
+
+    public String getSalaEspera() {
+        return salaEspera;
+    }
+
+    public void setSalaEspera(String salaEspera) {
+        this.salaEspera = salaEspera;
+    }
+    
     public boolean is4Jug() {
         return tipoPartida;
     }
@@ -84,7 +115,6 @@ public class Partida implements Serializable {
         String[] tm = new String[tipoPartida ? 4 : 2];
         for (int i = 0; i < tm.length; i++) {
             MiniTab m = tab.toMiniTab(i);
-            m.setNj(noms);
             tm[i] = Utils.GSON.toJson(m);
         }
         return tm;
@@ -101,6 +131,15 @@ public class Partida implements Serializable {
     public boolean isDeVueltas() {
         return deVueltas;
     }
+
+    public boolean mostrarDialogoVueltas() {
+        if (deVueltas && !dialogoMostrado) {
+            dialogoMostrado = true;
+            return true;
+        }
+        return false;
+    }
+
     public String msgToJson(GuiJson msg) {
         return Utils.GSON.toJson(msg);
     }
@@ -116,7 +155,7 @@ public class Partida implements Serializable {
     public boolean todasCartasTiradas() {
         return tab.todasCartasTiradas();
     }
-    
+
     //pre: terminada=true
     //pos: true si gana el jug/equipo 0   false si gana el jug/equipo 1
     public boolean getGanador() {
@@ -148,12 +187,11 @@ public class Partida implements Serializable {
                                 }
                             }
                         }
-
                 }
             }
             if (!tab.isArrastre()) {
                 if (tab.getCartaMesa(tab.getUltBaza()).getPalo() != tab.getPalotriunfo()) {
-                    int tengog= j.tengoGuinote(tab.getCartaMesa(tab.getUltBaza()));
+                    int tengog = j.tengoGuinote(tab.getCartaMesa(tab.getUltBaza()));
                     if (tengog > -1
                             && tab.compruebaCarta(tab.getTurno(), tengog) == null) {
                         return tengog;
@@ -163,24 +201,26 @@ public class Partida implements Serializable {
             if (tab.getCartaMesa(tab.getUltBaza()).isGuinote() && tab.getCartaMesa(tab.getUltBaza()).getPalo() != tab.getPalotriunfo()) {
                 List<Integer> l = j.triunfosbajos(tab.getPalotriunfo());
                 if (!l.isEmpty()) {
-                    for(Integer i :l){
-                        if(tab.compruebaCarta(tab.getTurno(),i) == null)
+                    for (Integer i : l) {
+                        if (tab.compruebaCarta(tab.getTurno(), i) == null) {
                             return i;
+                        }
                     }
                 }
             }
             String s = tab.compruebaCantes(tab.getTurno());
-            if(s.length() > 0){
-                if(tab.getCartaMesa(tab.getUltBaza()).getPalo() != tab.getPalotriunfo()){
+            if (s.length() > 0) {
+                if (tab.getCartaMesa(tab.getUltBaza()).getPalo() != tab.getPalotriunfo()) {
                     String ret = j.puedeMatar(tab.getCartaMesa(tab.getUltBaza()));
-                    if(ret != null){
-                        for(int i = 0;i<ret.length();i++){
-                            if(ret.charAt(i) == '1'){
-                                if(j.getMano()[i].getNumero() == 7
-                                        || j.getMano()[i].getNumero() == 8){
-                                    if(!s.contains(j.getMano()[i].getPalo()+"")){
-                                        if(tab.compruebaCarta(tab.getTurno(),i) == null)
+                    if (ret != null) {
+                        for (int i = 0; i < ret.length(); i++) {
+                            if (ret.charAt(i) == '1') {
+                                if (j.getMano()[i].getNumero() == 7
+                                        || j.getMano()[i].getNumero() == 8) {
+                                    if (!s.contains(j.getMano()[i].getPalo() + "")) {
+                                        if (tab.compruebaCarta(tab.getTurno(), i) == null) {
                                             return i;
+                                        }
                                     }
                                 }
                             }
@@ -189,9 +229,10 @@ public class Partida implements Serializable {
                 }
                 List<Integer> l = j.triunfosbajos(tab.getPalotriunfo());
                 if (!l.isEmpty()) {
-                    for(Integer i :l){
-                        if(tab.compruebaCarta(tab.getTurno(),i) == null)
+                    for (Integer i : l) {
+                        if (tab.compruebaCarta(tab.getTurno(), i) == null) {
                             return i;
+                        }
                     }
                 }
             }
@@ -204,9 +245,9 @@ public class Partida implements Serializable {
         return -1;
         //</editor-fold>
     }
+    
 
     //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="Métodos">
     /**
      * Realiza una acción de un jugador sobre el tablero devuelve objeto json
@@ -249,7 +290,7 @@ public class Partida implements Serializable {
                                             if (retorno.charAt(i) == tab.getPalotriunfo()) {
                                                 js.setMsg(js.getMsg(idjug) + " y las 40", idjug);
                                                 js.setMsg(js.getMsg(tab.s(idjug)) + " y las 40", tab.s(idjug));
-                                                
+
                                                 if (tipoPartida) {
                                                     js.setMsg(js.getMsg(tab.s(tab.s(idjug))) + " y las 40", tab.s(tab.s(idjug)));
                                                     js.setMsg(js.getMsg(tab.s(tab.s(tab.s(idjug)))) + " y las 40", tab.s(tab.s(tab.s(idjug))));
@@ -257,7 +298,7 @@ public class Partida implements Serializable {
                                             } else {
                                                 js.setMsg(js.getMsg(idjug) + " y las 20 en " + Utils.paloStr(retorno.charAt(i)), idjug);
                                                 js.setMsg(js.getMsg(tab.s(idjug)) + " y las 20 en " + Utils.paloStr(retorno.charAt(i)), tab.s(idjug));
-                                                
+
                                                 if (tipoPartida) {
                                                     js.setMsg(js.getMsg(tab.s(tab.s(idjug))) + " y las 20 en " + Utils.paloStr(retorno.charAt(i)), tab.s(tab.s(idjug)));
                                                     js.setMsg(js.getMsg(tab.s(tab.s(tab.s(idjug)))) + " y las 20 en " + Utils.paloStr(retorno.charAt(i)), tab.s(tab.s(tab.s(idjug))));
@@ -271,11 +312,11 @@ public class Partida implements Serializable {
                                                     js.setMsg(tab.getJug(idjug).getNombre() + " ha cantado las 40", tab.s(tab.s(idjug)));
                                                     js.setMsg(tab.getJug(idjug).getNombre() + " ha cantado las 40", tab.s(tab.s(tab.s(idjug))));
                                                 }
-                                                
+
                                             } else {
                                                 js.setMsg("Has cantado las 20 en " + Utils.paloStr(retorno.charAt(i)), idjug);
                                                 js.setMsg(tab.getJug(idjug).getNombre() + " ha cantado las 20 en " + Utils.paloStr(retorno.charAt(i)), tab.s(idjug));
-                                                
+
                                                 if (tipoPartida) {
                                                     js.setMsg(tab.getJug(idjug).getNombre() + " ha cantado las 20 en " + Utils.paloStr(retorno.charAt(i)), tab.s(tab.s(idjug)));
                                                     js.setMsg(tab.getJug(idjug).getNombre() + " ha cantado las 20 en " + Utils.paloStr(retorno.charAt(i)), tab.s(tab.s(tab.s(idjug))));
@@ -306,7 +347,7 @@ public class Partida implements Serializable {
                             tab.getJug(idjug).intercambiar(Integer.parseInt(params.charAt(0) + ""), Integer.parseInt(params.charAt(2) + ""));
                         }
                         break;
-                        
+
                 }
                 if (Utils.GUARDAR_PARTIDAS) {
                     if (!tabs.isEmpty()) {
@@ -330,11 +371,11 @@ public class Partida implements Serializable {
         }
         //</editor-fold>
     }
-    
+
     public String accionJugJSON(int idAcc, String params, int idjug) {
         return Utils.GSON.toJson(accionJug(idAcc, params, idjug));
     }
-    
+
     /**
      * si el tablero actual cambia lo guarda
      */
@@ -350,7 +391,7 @@ public class Partida implements Serializable {
             }
         }
     }
-    
+
     /**
      * llamar cuando estén todas (2 o 4) las cartas tiradas; decide el idJug del
      * ganador y lo devuelve, recoge las cartas a su respectiva baza, y hace
@@ -367,10 +408,11 @@ public class Partida implements Serializable {
             if (tab.isFin()) {
                 if (tab.getPuntuacion(0) < 101 && tab.getPuntuacion(1) < 101) {
                     //de vueltas
-                    int[] punt = {tab.getPuntuacion(0), tab.getPuntuacion(1)};
-                    tab = new Tablero(tipoPartida, tab.s(t), punt);
+                    Tablero tabAnt = tab;
+                    tab = new Tablero(tipoPartida, tab.s(t), new int[]{tabAnt.getPuntuacion(0), tabAnt.getPuntuacion(1)});
                     for (int i = 0; i < (tipoPartida ? 4 : 2); i++) {
-                        tab.getJug(i).setNombre(noms[i]);
+                        tab.getJug(i).setNombre(tabAnt.getJug(i).getNombre());
+                        tab.getJug(i).setIdDisp(tabAnt.getJug(i).getIdDisp());
                     }
                     deVueltas = true;
                     guardar();
@@ -380,7 +422,7 @@ public class Partida implements Serializable {
                     }
                     terminada = true;
                 }
-                
+
             }
             if (deVueltas) {
                 if (tab.getPuntuacion(0) > 100 || tab.getPuntuacion(1) > 100) {
@@ -391,12 +433,10 @@ public class Partida implements Serializable {
         }
         //</editor-fold>
     }
-    
-    
+
     public String compruebaCarta(int idjug, int carta) {
         return tab.compruebaCarta(idjug, carta);
     }
-    
-    //</editor-fold>
 
+    //</editor-fold>
 }
