@@ -4,34 +4,28 @@ import java.io.Serializable;
 
 import com.jldevelops.guinote.core.Carta;
 import com.jldevelops.guinote.core.Jugador;
-import static com.jldevelops.guinote.utils.Utils.PALOSC;
 
 public class MiniTab implements Serializable {
 
     private static final long serialVersionUID = 8L;
-    final private String[] cs = new String[6];
+    final private String[] c = new String[6];
     final private int[] p;
-    final private boolean[][] c;
     final private String t;
     /**
      * id del jugador que le toca hablar
      */
     final private int i;
     final private int h;
-    final private char pt;
-
     /**
      * en la posicion 0 SIEMPRE estara la carta del jugador que ha sido el
      * primero en tirar.
      */
-    final private String[] me;
+    final private String[] m;
     /**
      * id del jugador que ha hecho la ultima baza
      */
     final private int u;
-    final private boolean jd;
-    final private int cr;
-    final private String[] nj;
+    final private Integer r;
 
     public MiniTab(int idjug, Jugador[] jugadores, int[] puntuaciones, boolean[][] cantes,
             int idJugActual, int haempezado, char palotriunfo,
@@ -39,48 +33,55 @@ public class MiniTab implements Serializable {
         super();
         for (int i = 0; i < 6; i++) {
             if (jugadores[idjug].getCarta(i) != null) {
-                cs[i] = jugadores[idjug].getCarta(i).toString();
+                c[i] = jugadores[idjug].getCarta(i).toString();
             }
         }
         this.p = puntuaciones;
-        this.c = cantes;
         this.i = idJugActual;
         this.h = haempezado;
-        this.pt = palotriunfo;
-        this.me = new String[juegoDe4 ? 4 : 2];
+        this.m = new String[juegoDe4 ? 4 : 2];
         for (int i = 0; i < (juegoDe4 ? 4 : 2); i++) {
             if (cartasMesa[i] != null) {
-                me[i] = cartasMesa[i].toString();
+                m[i] = cartasMesa[i].toString();
             }
         }
         this.u = ultBaza;
-        this.jd = juegoDe4;
-        this.cr = cr;
+        if(cr == 0)
+            this.r = null;
+        else
+            this.r = cr;
         if (triunfo != null) {
             this.t = triunfo.toString();
         } else {
             this.t = null;
         }
-        this.nj = new String[juegoDe4 ? 4 : 2];
-        for (int i = 0; i < (juegoDe4 ? 4 : 2); i++) {
-            nj[i] = jugadores[i].getNombre();
-        }
     }
+    
+    public boolean todasCartasTiradas(boolean jd){
+        for(int i = 0;i<(jd?4:2);i++){
+            if(getCartaMesa(i,jd) == null){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    
+    public int getGanador(int idjug,boolean jd){
+        if(p[aQueBaza(idjug,jd)]>101 && p[aQueBaza(s(idjug,jd),jd)]>101)
+            return aQueBaza(u,jd);
+        if(p[aQueBaza(idjug,jd)]>101)
+            return aQueBaza(idjug,jd);
+        return aQueBaza(s(idjug,jd),jd);
+    }
+
 
     public String getTriunfo() {
         return t;
     }
 
     public String[] getCartas() {
-        return cs;
-    }
-
-    public boolean isCantado(char palo, int idjug) {
-        return c[aQueBaza(idjug)][PALOSC.indexOf(palo)];
-    }
-
-    public String getNombreJugador(int idjug) {
-        return nj[idjug];
+        return c;
     }
 
 
@@ -91,24 +92,16 @@ public class MiniTab implements Serializable {
     public int getHaempezado() {
         return h;
     }
-
-    public char getPalotriunfo() {
-        return pt;
-    }
-
+    
     public int getUltBaza() {
         return u;
     }
 
-    public boolean isJuegoDe4() {
-        return jd;
+    public Integer getCartasRestantes() {
+        return r;
     }
 
-    public int getCartasRestantes() {
-        return cr;
-    }
-
-    private int aQueBaza(int idjug) {
+    public int aQueBaza(int idjug,boolean jd) {
         if (jd) {
             if (idjug == 0 || idjug == 1) {
                 return idjug;
@@ -124,8 +117,8 @@ public class MiniTab implements Serializable {
         }
     }
 
-    public int getPuntuacion(int idjug) {
-        return p[aQueBaza(idjug)];
+    public int getPuntuacion(int idjug,boolean jd) {
+        return p[aQueBaza(idjug,jd)];
     }
 
     /**
@@ -134,7 +127,7 @@ public class MiniTab implements Serializable {
      * @param idjug ID del jugador
      * @return int
      */
-    public int s(int idjug) {
+    public int s(int idjug,boolean jd) {
 
         if (jd) {
             if (idjug == 3) {
@@ -158,21 +151,21 @@ public class MiniTab implements Serializable {
      * @param idjug
      * @return Carta
      */
-    public String getCartaMesa(int idjug) {
+    public String getCartaMesa(int idjug,boolean jd) {
         int ultBaza1 = u;
         if (u == -1) {
             ultBaza1 = h;
         }
         if (ultBaza1 == idjug) {
-            return me[0];
+            return m[0];
         } else {
-            if (s(ultBaza1) == idjug) {
-                return me[1];
+            if (s(ultBaza1,jd) == idjug) {
+                return m[1];
             } else {
-                if (s(s(ultBaza1)) == idjug) {
-                    return me[2];
+                if (s(s(ultBaza1,jd),jd) == idjug) {
+                    return m[2];
                 } else {
-                    return me[3];
+                    return m[3];
                 }
             }
         }

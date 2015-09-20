@@ -413,6 +413,7 @@ public class Partida implements Serializable {
                     for (int i = 0; i < (tipoPartida ? 4 : 2); i++) {
                         tab.getJug(i).setNombre(tabAnt.getJug(i).getNombre());
                         tab.getJug(i).setIdDisp(tabAnt.getJug(i).getIdDisp());
+                        tab.getJug(i).setInactivo(tabAnt.getJug(i).isInactivo());
                     }
                     deVueltas = true;
                     guardar();

@@ -240,6 +240,14 @@ public class Tablero implements Serializable, Cloneable {
      * @return String con el mensaje a imprimir en la pantalla de idjug
      */
     String cambiar7(int idjug) {
+        if(isArrastre()){
+            if (jugadores[idjug].tieneCarta("4" + String.valueOf(palotriunfo))) {
+                int idcarta = jugadores[idjug].numCarta("4" + palotriunfo);
+                jugadores[idjug].getMano()[idcarta].intercambiarValor(b.getMazo()[39]);
+                return "Has cambiado el 7.";//el punto del final es necesario
+            }
+            return "";
+        }
         if (ultBaza == idJugActual || ultBaza == s(s(idJugActual))) {
             if (jugadores[idjug].tieneCarta("4" + String.valueOf(palotriunfo))) {
                 int idcarta = jugadores[idjug].numCarta("4" + palotriunfo);
